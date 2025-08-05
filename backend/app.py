@@ -10,6 +10,10 @@ from game_state import GameState
 app = Flask(__name__)
 CORS(app)  # Cho phép Electron truy cập
 
+@app.route("/")
+def home():
+    return "Hello World!"
+
 # Khởi tạo các đối tượng
 generator = SudokuGenerator()
 solver = SudokuSolver()
@@ -72,15 +76,40 @@ def get_hint():
         row = data['row']
         col = data['col']
         
-        hint = solver.get_hint(board, row, col)
+        # Kiểm tra ô có trống không
+        if board[row][col] != 0:
+            return jsonify({
+                'success': False,
+                'error': 'Ô này đã có số'
+            })
         
-        return jsonify({
-            'success': True,
-            'hint': hint
-        })
+        # Kiểm tra board có hợp lệ không
+        if not solver.is_valid_board(board):
+            return jsonify({
+                'success': False,
+                'error': 'Trạng thái bảng không hợp lệ'
+            })
+        
+        # Thử gợi ý thông minh trước
+        hint = solver.get_smart_hint(board, row, col)
+        
+        # Nếu không có gợi ý thông minh, thử gợi ý thường
+        if hint is None:
+            hint = solver.get_hint(board, row, col)
+        
+        if hint is not None:
+            return jsonify({
+                'success': True,
+                'hint': hint
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Không thể tìm gợi ý cho ô này'
+            })
     
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        return jsonify({'success': False, 'error': f'Lỗi server: {str(e)}'})
 
 @app.route('/api/solve-puzzle', methods=['POST'])
 def solve_puzzle():
@@ -91,19 +120,51 @@ def solve_puzzle():
         data = request.json
         board = copy.deepcopy(data['board'])
         
-        if solver.solve(board):
-            return jsonify({
-                'success': True,
-                'solution': board
-            })
-        else:
+        # Kiểm tra board có hợp lệ không
+        if not solver.is_valid_board(board):
             return jsonify({
                 'success': False,
-                'error': 'Không thể giải puzzle này'
+                'error': 'Trạng thái bảng không hợp lệ - có số trùng lặp'
             })
+        
+        # Lưu board gốc để so sánh
+        original_board = copy.deepcopy(board)
+        
+        # Thử giải puzzle
+        if solver.solve(board):
+            # Kiểm tra solution có hợp lệ không
+            if solver.is_valid_board(board) and solver.is_complete(board):
+                return jsonify({
+                    'success': True,
+                    'solution': board
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': 'Solution tạo ra không hợp lệ'
+                })
+        else:
+            # Nếu không giải được, thử tìm hiểu nguyên nhân
+            empty_cells = []
+            for i in range(9):
+                for j in range(9):
+                    if original_board[i][j] == 0:
+                        if not solver.get_valid_numbers(original_board, i, j):
+                            empty_cells.append(f"({i+1},{j+1})")
+            
+            if empty_cells:
+                return jsonify({
+                    'success': False,
+                    'error': f'Không thể giải - các ô sau không có số hợp lệ: {", ".join(empty_cells)}'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': 'Không thể giải puzzle này với trạng thái hiện tại'
+                })
     
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        return jsonify({'success': False, 'error': f'Lỗi server: {str(e)}'})
 
 @app.route('/api/validate-note', methods=['POST'])
 def validate_note():
@@ -126,6 +187,40 @@ def validate_note():
     
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/check-solvable', methods=['POST'])
+def check_solvable():
+    """
+    Kiểm tra xem puzzle có giải được không
+    """
+    try:
+        data = request.json
+        board = copy.deepcopy(data['board'])
+        
+        # Kiểm tra board có hợp lệ không
+        if not solver.is_valid_board(board):
+            return jsonify({
+                'success': True,
+                'solvable': False,
+                'reason': 'Trạng thái bảng không hợp lệ'
+            })
+        
+        # Thử giải
+        if solver.solve(board):
+            return jsonify({
+                'success': True,
+                'solvable': True,
+                'reason': 'Puzzle có thể giải được'
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'solvable': False,
+                'reason': 'Puzzle không có solution với trạng thái hiện tại'
+            })
+    
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Lỗi server: {str(e)}'})
 
 @app.route('/api/save-game', methods=['POST'])
 def save_game():

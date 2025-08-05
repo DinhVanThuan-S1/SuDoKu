@@ -75,7 +75,122 @@ const elements = {
  */
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    initializeDeveloperFeatures();
 });
+
+/**
+ * Khởi tạo các tính năng dành cho developer
+ */
+function initializeDeveloperFeatures() {
+    // Kiểm tra xem có đang ở chế độ development không
+    const isDev = new URLSearchParams(window.location.search).get('dev') === 'true' || 
+                  process?.argv?.includes('--dev') || 
+                  process?.argv?.includes('--reload');
+    
+    if (isDev) {
+        // Hiển thị nút reload
+        const reloadBtn = document.getElementById('reload-btn');
+        if (reloadBtn) {
+            reloadBtn.style.display = 'block';
+            reloadBtn.addEventListener('click', reloadApp);
+        }
+        
+        // Thêm các phím tắt
+        document.addEventListener('keydown', handleDevKeyboard);
+        
+        console.log('🔧 Developer mode đã được kích hoạt');
+        console.log('📋 Phím tắt:');
+        console.log('   F5 hoặc Ctrl+R: Reload');
+        console.log('   Ctrl+Shift+R: Hard reload');
+        console.log('   F12: Toggle DevTools');
+    }
+}
+
+/**
+ * Xử lý phím tắt cho developer
+ */
+function handleDevKeyboard(event) {
+    // F5 - Reload
+    if (event.key === 'F5') {
+        event.preventDefault();
+        reloadApp();
+    }
+    
+    // Ctrl+R - Reload
+    if (event.ctrlKey && event.key === 'r' && !event.shiftKey) {
+        event.preventDefault();
+        reloadApp();
+    }
+    
+    // Ctrl+Shift+R - Hard reload
+    if (event.ctrlKey && event.shiftKey && event.key === 'R') {
+        event.preventDefault();
+        hardReloadApp();
+    }
+    
+    // F12 - Toggle DevTools
+    if (event.key === 'F12') {
+        event.preventDefault();
+        toggleDevTools();
+    }
+}
+
+/**
+ * Reload ứng dụng
+ */
+async function reloadApp() {
+    try {
+        console.log('🔄 Đang reload ứng dụng...');
+        
+        // Nếu đang chạy trong Electron
+        if (window.require) {
+            const { ipcRenderer } = window.require('electron');
+            await ipcRenderer.invoke('reload-app');
+        } else {
+            // Fallback cho browser
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('Lỗi khi reload:', error);
+        window.location.reload(); // Fallback
+    }
+}
+
+/**
+ * Hard reload ứng dụng (bỏ qua cache)
+ */
+async function hardReloadApp() {
+    try {
+        console.log('🔄 Đang hard reload ứng dụng...');
+        
+        // Nếu đang chạy trong Electron
+        if (window.require) {
+            const { ipcRenderer } = window.require('electron');
+            // Xóa cache trước khi reload
+            await ipcRenderer.invoke('reload-app');
+        } else {
+            // Fallback cho browser
+            window.location.reload(true);
+        }
+    } catch (error) {
+        console.error('Lỗi khi hard reload:', error);
+        window.location.reload(true); // Fallback
+    }
+}
+
+/**
+ * Toggle DevTools
+ */
+async function toggleDevTools() {
+    try {
+        if (window.require) {
+            const { ipcRenderer } = window.require('electron');
+            await ipcRenderer.invoke('toggle-devtools');
+        }
+    } catch (error) {
+        console.error('Lỗi khi toggle DevTools:', error);
+    }
+}
 
 /**
  * Khởi tạo ứng dụng
@@ -182,8 +297,15 @@ function handleKeyboard(e) {
         }
     }
     
-    // Xóa (Delete, Backspace)
-    if (e.key === 'Delete' || e.key === 'Backspace') {
+    // Số 0 - Xóa ô
+    if (e.key === '0') {
+        e.preventDefault();
+        eraseCell();
+    }
+    
+    // Xóa (Delete, Backspace, Space)
+    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
+        e.preventDefault();
         eraseCell();
     }
     
@@ -203,8 +325,8 @@ function handleKeyboard(e) {
         getHint();
     }
     
-    // Tạm dừng (Space hoặc P)
-    if (e.key === ' ' || e.key === 'p' || e.key === 'P') {
+    // Tạm dừng (P key)
+    if (e.key === 'p' || e.key === 'P') {
         e.preventDefault();
         togglePause();
     }
@@ -290,6 +412,11 @@ function createNumberPad() {
         btn.addEventListener('click', () => inputNumber(num));
         numberPad.appendChild(btn);
     }
+    
+    // Cập nhật số lượng ngay sau khi tạo
+    setTimeout(() => {
+        updateNumberPad();
+    }, 100);
 }
 
 /**
@@ -413,8 +540,24 @@ async function continueGame() {
         const data = await response.json();
         
         if (data.success && data.game_data) {
-            // Khôi phục trạng thái game
+            // Khôi phục trạng thái game với default values cho các property có thể thiếu
             gameState = {
+                board: [],
+                originalBoard: [],
+                solution: [],
+                selectedCell: null,
+                difficulty: 'medium',
+                startTime: Date.now(),
+                elapsedTime: 0,
+                timerInterval: null,
+                isPaused: false,
+                errors: 0,
+                maxErrors: 3,
+                hintsRemaining: 3,
+                score: 0,
+                isNoteMode: false,
+                gameHistory: [],
+                cellNotes: {},
                 ...data.game_data,
                 timerInterval: null,
                 isPaused: false,
@@ -478,6 +621,7 @@ async function saveGame() {
  * Quay lại menu chính (tự động lưu game)
  */
 async function backToMenu() {
+    // Dừng timer đơn giản
     if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
@@ -628,9 +772,14 @@ async function handleNumberInput(row, col, number) {
                 gameState.board[row][col] = number; // Vẫn điền số để hiển thị lỗi
                 gameState.errors++;
                 
+                // Hiển thị cảnh báo chi tiết
+                showError(`Số ${number} không hợp lệ ở vị trí (${row + 1}, ${col + 1}). Số này đã tồn tại trong hàng, cột hoặc khối 3x3!`);
+                
                 // Kiểm tra thua
                 if (gameState.errors >= gameState.maxErrors) {
                     await handleGameLoss();
+                } else {
+                    showInfo(`Bạn còn ${gameState.maxErrors - gameState.errors} lần thử`);
                 }
             }
         }
@@ -730,6 +879,9 @@ function updateBoard() {
             }
         }
     }
+    
+    // Cập nhật số lượng còn lại của từng số
+    updateNumberPad();
 }
 
 /**
@@ -792,6 +944,24 @@ function isValidMove(row, col, num) {
  * Cập nhật số lượng còn lại của từng số
  */
 function updateNumberPad() {
+    // Kiểm tra nếu board chưa được khởi tạo
+    if (!gameState.board || !Array.isArray(gameState.board) || gameState.board.length !== 9) {
+        // Nếu board chưa sẵn sàng, tạm thời hiển thị tất cả số là 9
+        for (let i = 1; i <= 9; i++) {
+            const remainingElement = document.getElementById(`remaining-${i}`);
+            if (remainingElement) {
+                remainingElement.textContent = '9';
+            }
+            
+            const button = document.querySelector(`[data-number="${i}"]`);
+            if (button) {
+                button.disabled = false;
+                button.style.opacity = '1';
+            }
+        }
+        return;
+    }
+
     const numberCounts = {};
     
     // Đếm số lượng từng số trên bảng
@@ -800,9 +970,14 @@ function updateNumberPad() {
     }
     
     for (let row = 0; row < 9; row++) {
+        // Kiểm tra từng hàng có tồn tại và là array
+        if (!Array.isArray(gameState.board[row]) || gameState.board[row].length !== 9) {
+            continue;
+        }
+        
         for (let col = 0; col < 9; col++) {
             const value = gameState.board[row][col];
-            if (value !== 0) {
+            if (value !== 0 && value >= 1 && value <= 9) {
                 numberCounts[value]++;
             }
         }
@@ -810,7 +985,7 @@ function updateNumberPad() {
     
     // Cập nhật hiển thị
     for (let i = 1; i <= 9; i++) {
-        const remaining = 9 - numberCounts[i];
+        const remaining = Math.max(0, 9 - numberCounts[i]);
         const remainingElement = document.getElementById(`remaining-${i}`);
         
         if (remainingElement) {
@@ -830,13 +1005,23 @@ function updateNumberPad() {
  * Cập nhật thông tin game
  */
 function updateGameInfo() {
-    elements.displays.score.textContent = gameState.score;
-    elements.displays.errors.textContent = `${gameState.errors}/${gameState.maxErrors}`;
+    elements.displays.score.textContent = gameState.score || 0;
+    elements.displays.errors.textContent = `${gameState.errors || 0}/${gameState.maxErrors || 3}`;
     elements.displays.difficulty.textContent = getDifficultyText(gameState.difficulty);
-    elements.displays.hintsCount.textContent = gameState.hintsRemaining;
+    elements.displays.hintsCount.textContent = gameState.hintsRemaining !== undefined ? gameState.hintsRemaining : 3;
+    
+    // Cập nhật trạng thái nút gợi ý
+    const hintsRemaining = gameState.hintsRemaining !== undefined ? gameState.hintsRemaining : 3;
+    const hintButton = elements.buttons.hint;
+    if (hintButton) {
+        hintButton.disabled = hintsRemaining <= 0;
+        hintButton.style.opacity = hintsRemaining <= 0 ? '0.5' : '1';
+        hintButton.title = hintsRemaining <= 0 ? 'Đã hết lượt gợi ý' : `Gợi ý (còn ${hintsRemaining} lượt)`;
+    }
     
     // Cập nhật màu errors
-    if (gameState.errors >= gameState.maxErrors - 1) {
+    const maxErrors = gameState.maxErrors || 3;
+    if ((gameState.errors || 0) >= maxErrors - 1) {
         elements.displays.errors.style.color = 'var(--danger-color)';
     } else {
         elements.displays.errors.style.color = 'var(--text-primary)';
@@ -856,7 +1041,7 @@ function getDifficultyText(difficulty) {
 }
 
 /**
- * Bắt đầu đếm thời gian
+ * Bắt đầu đếm thời gian (tối ưu hiệu suất)
  */
 function startTimer() {
     if (gameState.timerInterval) {
@@ -865,24 +1050,30 @@ function startTimer() {
     
     gameState.timerInterval = setInterval(() => {
         if (!gameState.isPaused) {
-            gameState.elapsedTime = Math.floor((Date.now() - gameState.startTime) / 1000);
+            // Tăng elapsedTime đơn giản hơn, tránh tính toán phức tạp
+            gameState.elapsedTime++;
             updateTimeDisplay();
         }
     }, 1000);
 }
 
 /**
- * Cập nhật hiển thị thời gian
+ * Cập nhật hiển thị thời gian (tối ưu hiệu suất)
  */
 function updateTimeDisplay() {
     const minutes = Math.floor(gameState.elapsedTime / 60);
     const seconds = gameState.elapsedTime % 60;
-    elements.displays.time.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Chỉ update DOM nếu thời gian thực sự thay đổi (tránh lag không cần thiết)
+    if (elements.displays.time.textContent !== timeString) {
+        elements.displays.time.textContent = timeString;
+    }
 }
 
 // Tiếp tục phần còn lại...
 /**
- * Tạm dừng/tiếp tục game
+ * Tạm dừng/tiếp tục game (tối ưu hiệu suất)
  */
 function togglePause() {
     gameState.isPaused = !gameState.isPaused;
@@ -976,14 +1167,47 @@ function eraseCell() {
     
     const { row, col } = gameState.selectedCell;
     
-    // Không thể xóa ô ban đầu
-    if (gameState.originalBoard[row][col] !== 0) return;
+    // Không thể xóa ô ban đầu (ô cố định)
+    if (gameState.originalBoard[row][col] !== 0) {
+        showInfo('Không thể xóa ô cố định của puzzle');
+        return;
+    }
     
-    // Chỉ xóa được ô sai
-    if (gameState.board[row][col] !== 0 && !isValidMove(row, col, gameState.board[row][col])) {
-        saveStateForUndo();
+    // Lưu trạng thái để hoàn tác
+    saveStateForUndo();
+    
+    const cellKey = `${row}-${col}`;
+    let hasErased = false;
+    
+    // Trường hợp 1: Ô có số (đúng hoặc sai) - xóa số
+    if (gameState.board[row][col] !== 0) {
         gameState.board[row][col] = 0;
+        hasErased = true;
         
+        // Tính lại điểm sau khi xóa
+        calculateScore();
+        
+        showInfo(`Đã xóa số ở ô (${row + 1}, ${col + 1})`);
+    } 
+    // Trường hợp 2: Ô trống nhưng có ghi chú - xóa ghi chú
+    else if (gameState.cellNotes[cellKey] && gameState.cellNotes[cellKey].size > 0) {
+        delete gameState.cellNotes[cellKey];
+        hasErased = true;
+        
+        showInfo(`Đã xóa ghi chú ở ô (${row + 1}, ${col + 1})`);
+    }
+    // Trường hợp 3: Ô hoàn toàn trống
+    else {
+        showInfo('Ô này đã trống');
+        // Hoàn tác lại state vì không có gì để xóa
+        if (gameState.gameHistory.length > 0) {
+            gameState.gameHistory.pop();
+        }
+        return;
+    }
+    
+    // Cập nhật giao diện nếu đã xóa được gì đó
+    if (hasErased) {
         updateBoard();
         updateNumberPad();
         updateGameInfo();
@@ -1007,12 +1231,26 @@ function toggleNoteMode() {
  * Lấy gợi ý
  */
 async function getHint() {
-    if (!gameState.selectedCell || gameState.hintsRemaining <= 0 || gameState.isPaused) return;
+    if (gameState.isPaused) return;
+    
+    // Kiểm tra số lượt gợi ý còn lại
+    if (gameState.hintsRemaining <= 0) {
+        showError('Bạn đã hết lượt gợi ý! Hãy tự giải các ô còn lại.');
+        return;
+    }
+    
+    if (!gameState.selectedCell) {
+        showError('Hãy chọn một ô trống để lấy gợi ý');
+        return;
+    }
     
     const { row, col } = gameState.selectedCell;
     
     // Không thể gợi ý cho ô đã có số
-    if (gameState.board[row][col] !== 0) return;
+    if (gameState.board[row][col] !== 0) {
+        showError('Ô này đã có số, không thể gợi ý');
+        return;
+    }
     
     try {
         showLoading(true);
@@ -1049,12 +1287,24 @@ async function getHint() {
             updateGameInfo();
             
             await checkGameComplete();
+            
+            // Thông báo kèm số lượt còn lại
+            const remaining = gameState.hintsRemaining;
+            const message = `Gợi ý: Số ${data.hint} đã được điền vào ô (${row + 1}, ${col + 1})`;
+            const remainingText = remaining > 0 ? ` | Còn ${remaining} lượt gợi ý` : ' | Đã hết lượt gợi ý';
+            showSuccess(message + remainingText);
         } else {
-            showError('Không thể lấy gợi ý cho ô này');
+            const errorMsg = data.error || 'Không thể lấy gợi ý cho ô này';
+            showError(errorMsg);
+            
+            // Nếu lỗi do board không hợp lệ, gợi ý người chơi kiểm tra lại
+            if (errorMsg.includes('không hợp lệ')) {
+                showError('Hãy kiểm tra lại các số đã điền - có thể có số trùng lặp trong hàng, cột hoặc khối 3x3');
+            }
         }
     } catch (error) {
         console.error('Lỗi lấy gợi ý:', error);
-        showError('Lỗi kết nối server');
+        showError('Lỗi kết nối server - Hãy thử lại');
     } finally {
         showLoading(false);
     }
@@ -1096,12 +1346,23 @@ async function solvePuzzle() {
             updateGameInfo();
             
             await checkGameComplete();
+            showSuccess('Puzzle đã được giải thành công!');
         } else {
-            showError('Không thể giải puzzle này');
+            const errorMsg = data.error || 'Không thể giải puzzle này';
+            showError(errorMsg);
+            
+            // Cung cấp gợi ý cho người chơi
+            if (errorMsg.includes('không hợp lệ') || errorMsg.includes('trùng lặp')) {
+                showError('Hãy kiểm tra lại các số đã điền - có thể có số trùng lặp trong hàng, cột hoặc khối 3x3');
+            } else if (errorMsg.includes('không có số hợp lệ')) {
+                showError('Có một số ô không thể điền số nào. Hãy thử hoàn tác vài bước và điền lại');
+            } else {
+                showError('Puzzle không thể giải với trạng thái hiện tại. Hãy thử hoàn tác và điền số khác');
+            }
         }
     } catch (error) {
         console.error('Lỗi giải puzzle:', error);
-        showError('Lỗi kết nối server');
+        showError('Lỗi kết nối server - Hãy thử lại');
     } finally {
         showLoading(false);
     }
@@ -1161,7 +1422,7 @@ async function checkGameComplete() {
  * Xử lý thắng game
  */
 async function handleGameWin() {
-    // Dừng timer
+    // Dừng timer đơn giản
     if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
@@ -1201,7 +1462,7 @@ async function handleGameWin() {
  * Xử lý thua game
  */
 async function handleGameLoss() {
-    // Dừng timer
+    // Dừng timer đơn giản
     if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
@@ -1408,7 +1669,21 @@ function showLoading(show) {
  * Hiển thị thông báo lỗi
  */
 function showError(message) {
-    alert('Lỗi: ' + message);
+    alert('❌ Lỗi: ' + message);
+}
+
+/**
+ * Hiển thị thông báo thành công
+ */
+function showSuccess(message) {
+    alert('✅ Thành công: ' + message);
+}
+
+/**
+ * Hiển thị thông báo thông tin
+ */
+function showInfo(message) {
+    alert('ℹ️ Thông tin: ' + message);
 }
 
 /**

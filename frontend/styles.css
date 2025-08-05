@@ -199,11 +199,13 @@ body.dark-theme {
     flex-direction: column;
     padding: 0;
     background: var(--bg-primary);
+    height: 100vh;
+    overflow: hidden;
 }
 
 .game-header-bar {
     width: 100%;
-    padding: 15px 20px;
+    padding: 10px 20px;
     background: var(--bg-secondary);
     border-bottom: 2px solid var(--border-color);
     display: flex;
@@ -223,10 +225,29 @@ body.dark-theme {
     justify-content: center;
 }
 
+/* Game info bar - căn giữa theo lưới Sudoku */
+.game-info-bar {
+    width: 100%;
+    padding: 10px 0;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .game-info {
     display: flex;
-    gap: 30px;
+    gap: 0; /* Không cần gap vì dùng flex: 1 */
     align-items: center;
+    /* Căn chỉnh chính xác theo lưới Sudoku 380px */
+    width: 380px;
+    justify-content: space-between;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .info-item {
@@ -234,18 +255,24 @@ body.dark-theme {
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    text-align: center;
+    flex: 1; /* Chia đều không gian */
 }
 
 .info-label {
     font-size: 0.8rem;
     color: var(--text-secondary);
     font-weight: 500;
+    text-align: center;
+    white-space: nowrap; /* Ngăn xuống dòng */
 }
 
 .info-value {
     font-size: 1.1rem;
     color: var(--text-primary);
     font-weight: bold;
+    text-align: center;
+    white-space: nowrap; /* Ngăn xuống dòng */
 }
 
 .icon-btn {
@@ -269,6 +296,31 @@ body.dark-theme {
     transform: scale(1.1);
 }
 
+/* Nút reload cho developer mode */
+.icon-btn.dev-only {
+    background: var(--warning-color);
+    color: #000;
+    animation: pulse 2s infinite;
+}
+
+.icon-btn.dev-only:hover {
+    background: #e0a800;
+    transform: scale(1.1) rotate(360deg);
+    transition: all 0.5s ease;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+}
+
 .hints-remaining {
     font-size: 1rem;
     color: var(--text-primary);
@@ -280,11 +332,11 @@ body.dark-theme {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 5px 20px;
     position: relative;
 }
 
-/* Sudoku grid */
+/* Sudoku grid - Giảm kích thước để vừa viewport */
 .sudoku-grid {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
@@ -293,8 +345,8 @@ body.dark-theme {
     background: var(--border-color);
     border: 3px solid var(--border-color);
     border-radius: 10px;
-    width: 450px;
-    height: 450px;
+    width: 380px;
+    height: 380px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -305,7 +357,7 @@ body.dark-theme {
     justify-content: center;
     cursor: pointer;
     position: relative;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     transition: all 0.2s ease;
     color: var(--text-primary);
@@ -372,13 +424,13 @@ body.dark-theme {
 /* Game controls */
 .game-controls {
     width: 100%;
-    padding: 20px;
+    padding: 15px;
     background: var(--bg-secondary);
     border-top: 2px solid var(--border-color);
 }
 
 .number-pad {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .number-buttons {
@@ -389,13 +441,13 @@ body.dark-theme {
 }
 
 .number-btn {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border: 2px solid var(--border-color);
     border-radius: 10px;
     background: var(--cell-bg);
     color: var(--text-primary);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -420,12 +472,12 @@ body.dark-theme {
 .action-buttons {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
 .action-btn {
-    padding: 10px 15px;
+    padding: 8px 12px;
     border: 2px solid var(--border-color);
     border-radius: 8px;
     background: var(--cell-bg);
@@ -435,8 +487,8 @@ body.dark-theme {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
-    min-width: 80px;
+    gap: 4px;
+    min-width: 70px;
 }
 
 .action-btn:hover {

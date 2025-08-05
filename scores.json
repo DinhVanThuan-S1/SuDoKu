@@ -1,16 +1,164 @@
 {
+  "hard": [
+    {
+      "difficulty": "hard",
+      "time": 6,
+      "score": 1994,
+      "date": "2025-08-05T15:32:13.253689"
+    },
+    {
+      "difficulty": "hard",
+      "time": 13,
+      "score": 1987,
+      "date": "2025-08-05T16:54:29.270660"
+    },
+    {
+      "difficulty": "hard",
+      "time": 20,
+      "score": 1980,
+      "date": "2025-08-05T17:26:22.160880"
+    },
+    {
+      "difficulty": "hard",
+      "time": 36,
+      "score": 1964,
+      "date": "2025-08-05T14:15:24.797766"
+    },
+    {
+      "difficulty": "hard",
+      "time": 36,
+      "score": 1964,
+      "date": "2025-08-05T16:11:04.033420"
+    },
+    {
+      "difficulty": "hard",
+      "time": 40,
+      "score": 1960,
+      "date": "2025-08-05T17:25:56.900947"
+    },
+    {
+      "difficulty": "hard",
+      "time": 56,
+      "score": 1944,
+      "date": "2025-08-05T16:10:18.394683"
+    },
+    {
+      "difficulty": "hard",
+      "time": 56,
+      "score": 1944,
+      "date": "2025-08-05T16:36:12.160118"
+    },
+    {
+      "difficulty": "hard",
+      "time": 18,
+      "score": 1882,
+      "date": "2025-08-05T16:54:52.230585"
+    },
+    {
+      "difficulty": "hard",
+      "time": 139,
+      "score": 1861,
+      "date": "2025-08-05T17:48:56.585315"
+    }
+  ],
+  "easy": [
+    {
+      "difficulty": "easy",
+      "time": 122,
+      "score": 878,
+      "date": "2025-08-05T16:08:48.630648"
+    },
+    {
+      "difficulty": "easy",
+      "time": 152,
+      "score": 848,
+      "date": "2025-08-05T15:35:15.457922"
+    },
+    {
+      "difficulty": "easy",
+      "time": 254,
+      "score": 746,
+      "date": "2025-08-05T15:19:15.219126"
+    },
+    {
+      "difficulty": "easy",
+      "time": 548,
+      "score": 500,
+      "date": "2025-08-05T15:44:30.461970"
+    },
+    {
+      "difficulty": "easy",
+      "time": 569,
+      "score": 500,
+      "date": "2025-08-05T18:03:20.013510"
+    },
+    {
+      "difficulty": "easy",
+      "time": 411,
+      "score": 489,
+      "date": "2025-08-05T14:25:23.046213"
+    }
+  ],
   "medium": [
     {
       "difficulty": "medium",
-      "time": 14,
-      "score": 1486,
-      "date": "2025-08-05T13:52:17.991898"
+      "time": 3,
+      "score": 1497,
+      "date": "2025-08-05T16:50:31.144610"
     },
     {
       "difficulty": "medium",
-      "time": 382,
-      "score": 1118,
-      "date": "2025-08-05T13:58:55.665164"
+      "time": 9,
+      "score": 1491,
+      "date": "2025-08-05T16:49:39.603278"
+    },
+    {
+      "difficulty": "medium",
+      "time": 9,
+      "score": 1491,
+      "date": "2025-08-05T17:20:22.080214"
+    },
+    {
+      "difficulty": "medium",
+      "time": 30,
+      "score": 1470,
+      "date": "2025-08-05T17:52:07.104182"
+    },
+    {
+      "difficulty": "medium",
+      "time": 56,
+      "score": 1444,
+      "date": "2025-08-05T16:53:06.227112"
+    },
+    {
+      "difficulty": "medium",
+      "time": 81,
+      "score": 1419,
+      "date": "2025-08-05T16:40:37.661348"
+    },
+    {
+      "difficulty": "medium",
+      "time": 57,
+      "score": 1343,
+      "date": "2025-08-05T17:41:25.025260"
+    },
+    {
+      "difficulty": "medium",
+      "time": 60,
+      "score": 1340,
+      "date": "2025-08-05T15:48:34.024830"
+    },
+    {
+      "difficulty": "medium",
+      "time": 165,
+      "score": 1335,
+      "date": "2025-08-05T17:15:03.871334"
+    },
+    {
+      "difficulty": "medium",
+      "time": 106,
+      "score": 1194,
+      "date": "2025-08-05T15:23:18.906622"
     }
   ]
 }

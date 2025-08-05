@@ -78,33 +78,42 @@
         <button id="theme-toggle" class="icon-btn" title="Đổi giao diện">
           <span>🌙</span>
         </button>
+        <!-- Nút reload chỉ hiển thị trong development mode -->
+        <button id="reload-btn" class="icon-btn dev-only" title="Reload ứng dụng (F5)" style="display: none;">
+          <span>🔄</span>
+        </button>
       </div>
 
       <div class="header-center">
-        <div class="game-info">
-          <div class="info-item">
-            <span class="info-label">Điểm:</span>
-            <span id="score-display" class="info-value">0</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Lỗi:</span>
-            <span id="errors-display" class="info-value">0/3</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Mức độ:</span>
-            <span id="difficulty-display" class="info-value">Trung bình</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Thời gian:</span>
-            <span id="time-display" class="info-value">00:00</span>
-          </div>
-        </div>
+        <!-- Game info được di chuyển ra ngoài -->
       </div>
 
       <div class="header-right">
         <div class="hints-remaining">
           <span>Gợi ý: </span>
           <span id="hints-count">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game info bar - riêng biệt, căn giữa theo lưới -->
+    <div class="game-info-bar">
+      <div class="game-info">
+        <div class="info-item">
+          <span class="info-label">Điểm:</span>
+          <span id="score-display" class="info-value">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Lỗi:</span>
+          <span id="errors-display" class="info-value">0/3</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Mức độ:</span>
+          <span id="difficulty-display" class="info-value">Trung bình</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Thời gian:</span>
+          <span id="time-display" class="info-value">00:00</span>
         </div>
       </div>
     </div>
@@ -140,7 +149,7 @@
           <span class="btn-icon">↶</span>
           <span class="btn-text">Hoàn tác</span>
         </button>
-        <button id="erase-btn" class="action-btn" title="Xóa">
+        <button id="erase-btn" class="action-btn" title="Xóa số/ghi chú (Delete, Backspace, 0, Space)">
           <span class="btn-icon">🗑️</span>
           <span class="btn-text">Xóa</span>
         </button>
