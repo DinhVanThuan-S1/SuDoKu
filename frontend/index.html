@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="main-menu">
+  <!-- Màn hình chính -->
+  <div id="main-screen" class="screen active">
+    <div class="main-container">
+      <!-- Logo và tiêu đề -->
+      <div class="game-header">
+        <div class="game-logo">
+          <img src="assets/sudoku-icon.png" alt="Sudoku" class="logo-image">
+        </div>
+        <h1 class="game-title">SUDOKU</h1>
+        <p class="game-subtitle">Trò chơi logic số học</p>
+      </div>
+
+      <!-- Menu chính -->
+      <div class="main-menu-buttons">
+        <button id="continue-btn" class="menu-btn primary" style="display: none;">
+          <span class="btn-text">Tiếp tục</span>
+        </button>
+        <button id="new-game-btn" class="menu-btn primary">
+          <span class="btn-text">Trò chơi mới</span>
+        </button>
+        <button id="rules-btn" class="menu-btn secondary">
+          <span class="btn-text">Luật chơi</span>
+        </button>
+        <button id="scores-btn" class="menu-btn secondary">
+          <span class="btn-text">Bảng điểm</span>
+        </button>
+        <button id="exit-btn" class="menu-btn danger">
+          <span class="btn-text">Thoát</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Màn hình chọn độ khó -->
+  <div id="difficulty-screen" class="screen">
+    <div class="difficulty-container">
+      <h2>Chọn mức độ</h2>
+      <div class="difficulty-buttons">
+        <button class="difficulty-btn" data-difficulty="easy">
+          <span class="difficulty-name">Dễ</span>
+          <span class="difficulty-desc">40-45 ô trống</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="medium">
+          <span class="difficulty-name">Trung bình</span>
+          <span class="difficulty-desc">46-50 ô trống</span>
+        </button>
+        <button class="difficulty-btn" data-difficulty="hard">
+          <span class="difficulty-name">Khó</span>
+          <span class="difficulty-desc">51-55 ô trống</span>
+        </button>
+      </div>
+      <button id="back-to-main" class="menu-btn secondary">Quay lại</button>
+    </div>
+  </div>
+
+  <!-- Màn hình game -->
+  <div id="game-screen" class="screen">
+    <!-- Header game -->
+    <div class="game-header-bar">
+      <div class="header-left">
+        <button id="back-to-menu" class="icon-btn" title="Về menu chính">
+          <span>🏠</span>
+        </button>
+        <button id="pause-btn" class="icon-btn" title="Tạm dừng">
+          <span>⏸️</span>
+        </button>
+        <button id="theme-toggle" class="icon-btn" title="Đổi giao diện">
+          <span>🌙</span>
+        </button>
+      </div>
+
+      <div class="header-center">
+        <div class="game-info">
+          <div class="info-item">
+            <span class="info-label">Điểm:</span>
+            <span id="score-display" class="info-value">0</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Lỗi:</span>
+            <span id="errors-display" class="info-value">0/3</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Mức độ:</span>
+            <span id="difficulty-display" class="info-value">Trung bình</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Thời gian:</span>
+            <span id="time-display" class="info-value">00:00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="hints-remaining">
+          <span>Gợi ý: </span>
+          <span id="hints-count">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game board container -->
+    <div class="game-container">
+      <!-- Sudoku grid -->
+      <div id="sudoku-grid" class="sudoku-grid">
+        <!-- Grid sẽ được tạo bằng JavaScript -->
+      </div>
+
+      <!-- Paused overlay -->
+      <div id="paused-overlay" class="paused-overlay" style="display: none;">
+        <div class="paused-content">
+          <h2>Game đã tạm dừng</h2>
+          <button id="resume-btn" class="menu-btn primary">Tiếp tục</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Number pad và controls -->
+    <div class="game-controls">
+      <!-- Number pad -->
+      <div class="number-pad">
+        <div class="number-buttons">
+          <!-- Buttons 1-9 sẽ được tạo bằng JavaScript -->
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button id="undo-btn" class="action-btn" title="Hoàn tác">
+          <span class="btn-icon">↶</span>
+          <span class="btn-text">Hoàn tác</span>
+        </button>
+        <button id="erase-btn" class="action-btn" title="Xóa">
+          <span class="btn-icon">🗑️</span>
+          <span class="btn-text">Xóa</span>
+        </button>
+        <button id="note-btn" class="action-btn toggle" title="Ghi chú">
+          <span class="btn-icon">✏️</span>
+          <span class="btn-text">Ghi chú</span>
+        </button>
+        <button id="hint-btn" class="action-btn" title="Gợi ý">
+          <span class="btn-icon">💡</span>
+          <span class="btn-text">Gợi ý</span>
+        </button>
+        <button id="solve-btn" class="action-btn" title="Giải">
+          <span class="btn-icon">🎯</span>
+          <span class="btn-text">Giải</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal luật chơi -->
+  <div id="rules-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Luật chơi Sudoku</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="rules-content">
+          <h3>Mục tiêu:</h3>
+          <p>Điền các số từ 1 đến 9 vào lưới 9x9 sao cho:</p>
+          <ul>
+            <li>Mỗi hàng chứa đủ các số từ 1 đến 9, không trùng lặp</li>
+            <li>Mỗi cột chứa đủ các số từ 1 đến 9, không trùng lặp</li>
+            <li>Mỗi khối 3x3 chứa đủ các số từ 1 đến 9, không trùng lặp</li>
+          </ul>
+
+          <h3>Cách chơi:</h3>
+          <ul>
+            <li>Chọn một ô trống và điền số từ 1-9</li>
+            <li>Sử dụng logic để tìm ra số đúng cho từng ô</li>
+            <li>Số được điền phải tuân thủ các quy tắc trên</li>
+          </ul>
+
+          <h3>Tính năng hỗ trợ:</h3>
+          <ul>
+            <li><strong>Ghi chú:</strong> Ghi lại các số có thể điền vào ô</li>
+            <li><strong>Gợi ý:</strong> Hiển thị số đúng cho ô được chọn (3 lần/game)</li>
+            <li><strong>Hoàn tác:</strong> Quay lại bước trước</li>
+            <li><strong>Giải:</strong> Tự động giải toàn bộ puzzle</li>
+          </ul>
+
+          <h3>Điểm số:</h3>
+          <p>Điểm được tính dựa trên thời gian hoàn thành, mức độ khó và số lỗi mắc phải.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal bảng điểm -->
+  <div id="scores-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Bảng điểm cao</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="scores-content" class="scores-content">
+          <!-- Nội dung sẽ được tạo bằng JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal game over -->
+  <div id="game-over-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="game-over-title">Game Over</h2>
+      </div>
+      <div class="modal-body">
+        <div id="game-over-content" class="game-over-content">
+          <!-- Nội dung sẽ được tạo bằng JavaScript -->
+        </div>
+        <div class="game-over-buttons">
+          <button id="new-game-over-btn" class="menu-btn primary">Trò chơi mới</button>
+          <button id="retry-game-btn" class="menu-btn secondary">Chơi lại</button>
+          <button id="menu-game-over-btn" class="menu-btn secondary">Về menu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p>Đang tải...</p>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+
+</html>
