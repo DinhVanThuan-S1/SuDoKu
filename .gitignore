@@ -1,8 +1,72 @@
-echo "node_modules/
-.env
-uploads/
-*.log
-.DS_Store
+# ===========================================
+# Python
+# ===========================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
 dist/
-build/" > .gitignore
-node_modules
+build/
+*.log
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+*.env
+*.env.*
+
+# Bytecode cache
+.cache/
+.pytest_cache/
+
+# IDEs / Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ===========================================
+# Flask
+# ===========================================
+instance/
+*.db
+*.sqlite3
+
+# Flask cache and logs
+*.log
+*.pid
+
+# Flask session
+*.session
+
+# ===========================================
+# Node / Electron (nếu bạn dùng giao diện desktop bằng HTML/JS)
+# ===========================================
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+dist/
+build/
+
+# Electron
+*.asar
+*.tsbuildinfo
+
+# ===========================================
+# OS Files
+# ===========================================
+.DS_Store
+Thumbs.db
+
+# ===========================================
+# Git
+# ===========================================
+*.orig
+*.swp
