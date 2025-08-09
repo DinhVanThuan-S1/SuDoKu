@@ -1628,7 +1628,8 @@ async function handleGameWin() {
                 difficulty: gameState.difficulty,
                 time: gameState.elapsedTime,
                 errors: gameState.errors,
-                score: gameState.score // Gửi điểm đã tính từ frontend
+                score: gameState.score, // Gửi điểm đã tính từ frontend
+                isSolvedByAlgorithm: gameState.isSolvedByAlgorithm // Gửi thông tin cách giải
             })
         });
         
@@ -1702,6 +1703,10 @@ function showGameOverModal(isWin) {
             </div>
             <div class="score-breakdown">
                 <h4>Chi tiết điểm số:</h4>
+                ${gameState.isSolvedByAlgorithm ? 
+                    '<div class="completion-method-warning"><strong>⚠️ Đã sử dụng chức năng "Giải" - Không tính điểm</strong></div>' : 
+                    ''
+                }
                 <div class="score-item">
                     <span class="score-label">Điểm từ các ô:</span>
                     <span class="score-value">+${scoreDetails.baseScore}</span>

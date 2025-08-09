@@ -280,8 +280,9 @@ def save_score():
         time_seconds = data['time']
         errors = data.get('errors', 0)
         score = data['score']  # Điểm được tính ở frontend
+        is_solved_by_algorithm = data.get('isSolvedByAlgorithm', False)
             
-        success = game_state.save_score(difficulty, time_seconds, score)
+        success = game_state.save_score(difficulty, time_seconds, score, is_solved_by_algorithm)
         
         return jsonify({
             'success': success,

@@ -758,6 +758,17 @@ body.dark-theme {
     font-weight: bold;
 }
 
+/* Completion method warning */
+.completion-method-warning {
+    background: var(--warning-color);
+    color: #000;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
 /* Loading overlay */
 .loading-overlay {
     position: fixed;

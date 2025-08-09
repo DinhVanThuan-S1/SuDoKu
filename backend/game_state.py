@@ -36,7 +36,7 @@ class GameState:
             print(f"Lỗi khi tải game: {e}")
             return None
     
-    def save_score(self, difficulty, time_seconds, score):
+    def save_score(self, difficulty, time_seconds, score, is_solved_by_algorithm=False):
         """
         Lưu điểm số
         """
@@ -47,7 +47,8 @@ class GameState:
                 'difficulty': difficulty,
                 'time': time_seconds,
                 'score': score,
-                'date': datetime.now().isoformat()
+                'date': datetime.now().isoformat(),
+                'solved_by_algorithm': is_solved_by_algorithm
             }
             
             if difficulty not in scores:
