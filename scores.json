@@ -2,187 +2,29 @@
   "hard": [
     {
       "difficulty": "hard",
-      "time": 1,
-      "score": 1999,
-      "date": "2025-08-09T18:07:57.474739"
-    },
-    {
-      "difficulty": "hard",
-      "time": 1,
-      "score": 1999,
-      "date": "2025-08-09T18:09:42.439293"
-    },
-    {
-      "difficulty": "hard",
-      "time": 1,
-      "score": 1999,
-      "date": "2025-08-09T18:39:29.006805"
+      "time": 2,
+      "score": 2140,
+      "date": "2025-08-09T19:59:48.132681"
     },
     {
       "difficulty": "hard",
       "time": 2,
       "score": 1998,
-      "date": "2025-08-09T16:44:58.410455"
-    },
-    {
-      "difficulty": "hard",
-      "time": 2,
-      "score": 1998,
-      "date": "2025-08-09T18:15:44.117608"
-    },
-    {
-      "difficulty": "hard",
-      "time": 4,
-      "score": 1996,
-      "date": "2025-08-09T18:08:05.794490"
-    },
-    {
-      "difficulty": "hard",
-      "time": 8,
-      "score": 1992,
-      "date": "2025-08-09T18:03:27.069215"
-    },
-    {
-      "difficulty": "hard",
-      "time": 8,
-      "score": 1992,
-      "date": "2025-08-09T18:16:55.800699"
-    },
-    {
-      "difficulty": "hard",
-      "time": 8,
-      "score": 1992,
-      "date": "2025-08-09T18:17:08.377270"
-    },
-    {
-      "difficulty": "hard",
-      "time": 9,
-      "score": 1991,
-      "date": "2025-08-09T17:53:59.490914"
-    }
-  ],
-  "easy": [
-    {
-      "difficulty": "easy",
-      "time": 1,
-      "score": 999,
-      "date": "2025-08-09T18:15:31.399552"
-    },
-    {
-      "difficulty": "easy",
-      "time": 2,
-      "score": 998,
-      "date": "2025-08-09T18:07:43.964835"
-    },
-    {
-      "difficulty": "easy",
-      "time": 3,
-      "score": 997,
-      "date": "2025-08-09T17:41:16.218427"
-    },
-    {
-      "difficulty": "easy",
-      "time": 3,
-      "score": 997,
-      "date": "2025-08-09T18:49:49.365459"
-    },
-    {
-      "difficulty": "easy",
-      "time": 4,
-      "score": 996,
-      "date": "2025-08-09T18:09:31.366785"
-    },
-    {
-      "difficulty": "easy",
-      "time": 8,
-      "score": 992,
-      "date": "2025-08-09T18:04:35.695438"
-    },
-    {
-      "difficulty": "easy",
-      "time": 9,
-      "score": 991,
-      "date": "2025-08-09T18:04:22.580592"
-    },
-    {
-      "difficulty": "easy",
-      "time": 9,
-      "score": 991,
-      "date": "2025-08-09T18:16:14.719543"
-    },
-    {
-      "difficulty": "easy",
-      "time": 9,
-      "score": 991,
-      "date": "2025-08-09T18:50:04.547311"
-    },
-    {
-      "difficulty": "easy",
-      "time": 10,
-      "score": 990,
-      "date": "2025-08-09T17:52:24.950175"
+      "date": "2025-08-09T19:56:54.613243"
     }
   ],
   "medium": [
     {
       "difficulty": "medium",
-      "time": 1,
-      "score": 1499,
-      "date": "2025-08-09T18:07:51.795856"
-    },
-    {
-      "difficulty": "medium",
-      "time": 1,
-      "score": 1499,
-      "date": "2025-08-09T18:15:37.974038"
+      "time": 30,
+      "score": 1505,
+      "date": "2025-08-09T20:00:35.431566"
     },
     {
       "difficulty": "medium",
       "time": 2,
       "score": 1498,
-      "date": "2025-08-09T18:37:54.625093"
-    },
-    {
-      "difficulty": "medium",
-      "time": 2,
-      "score": 1498,
-      "date": "2025-08-09T18:39:22.189804"
-    },
-    {
-      "difficulty": "medium",
-      "time": 2,
-      "score": 1498,
-      "date": "2025-08-09T18:39:42.795370"
-    },
-    {
-      "difficulty": "medium",
-      "time": 2,
-      "score": 1498,
-      "date": "2025-08-09T18:43:13.215705"
-    },
-    {
-      "difficulty": "medium",
-      "time": 2,
-      "score": 1498,
-      "date": "2025-08-09T18:57:51.172613"
-    },
-    {
-      "difficulty": "medium",
-      "time": 2,
-      "score": 1498,
-      "date": "2025-08-09T19:45:20.406463"
-    },
-    {
-      "difficulty": "medium",
-      "time": 3,
-      "score": 1497,
-      "date": "2025-08-09T18:26:17.164612"
-    },
-    {
-      "difficulty": "medium",
-      "time": 3,
-      "score": 1497,
-      "date": "2025-08-09T18:57:39.708493"
+      "date": "2025-08-09T19:57:19.081155"
     }
   ]
 }

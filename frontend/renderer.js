@@ -1611,15 +1611,17 @@ async function handleGameWin() {
             body: JSON.stringify({
                 difficulty: gameState.difficulty,
                 time: gameState.elapsedTime,
-                errors: gameState.errors
+                errors: gameState.errors,
+                score: gameState.score // Gửi điểm đã tính từ frontend
             })
         });
         
         const data = await response.json();
         
-        if (data.success) {
-            gameState.score = data.score;
-        }
+        // Không cần ghi đè score nữa vì đã tính đúng ở frontend
+        // if (data.success) {
+        //     gameState.score = data.score;
+        // }
         
         // Xóa saved game vì đã hoàn thành
         await fetch(`${API_BASE}/clear-game`, {
