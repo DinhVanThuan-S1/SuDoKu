@@ -25,7 +25,8 @@ let gameState = {
     isNoteMode: false,
     gameHistory: [], // Lưu lịch sử các nước đi để hoàn tác
     cellNotes: {}, // Lưu ghi chú của từng ô
-    isCompleted: false // Flag để track game đã hoàn thành
+    isCompleted: false, // Flag để track game đã hoàn thành
+    isSolvedByAlgorithm: false // Flag để track game được giải bằng thuật toán
 };
 
 // UI Elements
@@ -527,7 +528,8 @@ async function startNewGame(difficulty) {
                 isNoteMode: false,
                 gameHistory: [],
                 cellNotes: {},
-                isCompleted: false
+                isCompleted: false,
+                isSolvedByAlgorithm: false
             };
             
             // Cập nhật giao diện
@@ -582,6 +584,7 @@ async function continueGame() {
                 gameHistory: [],
                 cellNotes: {},
                 isCompleted: false,
+                isSolvedByAlgorithm: false,
                 ...data.game_data,
                 timerInterval: null,
                 isPaused: false,
@@ -1455,6 +1458,7 @@ async function solvePuzzle() {
             gameState.board = data.solution;
             gameState.score = 0;
             gameState.cellNotes = {}; // Xóa tất cả ghi chú
+            gameState.isSolvedByAlgorithm = true; // Đánh dấu đã giải bằng thuật toán
             
             updateBoard();
             updateNumberPad();
@@ -1515,6 +1519,18 @@ function calculateScore() {
  * Tính điểm cuối game với bonus
  */
 function calculateFinalScore() {
+    // Nếu đã giải bằng thuật toán, điểm = 0
+    if (gameState.isSolvedByAlgorithm) {
+        gameState.score = 0;
+        return {
+            baseScore: 0,
+            completionBonus: 0,
+            speedBonus: 0,
+            accuracyBonus: 0,
+            finalScore: 0
+        };
+    }
+    
     // Điểm cơ bản từ việc điền ô
     calculateScore();
     let finalScore = gameState.score;
@@ -1747,6 +1763,7 @@ function retryGame() {
     gameState.gameHistory = [];
     gameState.cellNotes = {};
     gameState.isCompleted = false; // Reset flag hoàn thành
+    gameState.isSolvedByAlgorithm = false; // Reset flag giải bằng thuật toán
     
     // Clear highlights and selections
     document.querySelectorAll('.sudoku-cell').forEach(cell => {
