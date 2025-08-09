@@ -1338,7 +1338,7 @@ async function getHint() {
 async function solvePuzzle() {
     if (gameState.isPaused) return;
     
-    const confirmed = confirm('Bạn có chắc muốn giải toàn bộ puzzle? Điểm số sẽ được đặt lại về 0.');
+    const confirmed = confirm('Bạn có chắc muốn giải toàn bộ puzzle?');
     if (!confirmed) return;
     
     try {
