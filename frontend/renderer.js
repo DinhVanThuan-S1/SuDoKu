@@ -463,6 +463,10 @@ function showDifficultyScreen() {
 function showGameScreen() {
     hideAllScreens();
     elements.screens.game.classList.add('active');
+    
+    // Reset nút pause về trạng thái ban đầu
+    elements.buttons.pause.innerHTML = '<span>⏸️</span>';
+    elements.buttons.pause.title = 'Tạm dừng';
 }
 
 /**
@@ -492,6 +496,9 @@ async function startNewGame(difficulty) {
         const data = await response.json();
         
         if (data.success) {
+            // Ẩn modal tạm dừng nếu đang hiển thị
+            elements.containers.pausedOverlay.style.display = 'none';
+            
             // Khởi tạo trạng thái game mới
             gameState = {
                 board: JSON.parse(JSON.stringify(data.puzzle)),
@@ -542,6 +549,9 @@ async function continueGame() {
         const data = await response.json();
         
         if (data.success && data.game_data) {
+            // Ẩn modal tạm dừng nếu đang hiển thị
+            elements.containers.pausedOverlay.style.display = 'none';
+            
             // Khôi phục trạng thái game với default values cho các property có thể thiếu
             gameState = {
                 board: [],
@@ -628,6 +638,12 @@ async function backToMenu() {
     if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
+    }
+    
+    // Ẩn modal tạm dừng nếu đang hiển thị
+    if (gameState.isPaused) {
+        gameState.isPaused = false;
+        elements.containers.pausedOverlay.style.display = 'none';
     }
     
     // Chỉ lưu game nếu chưa hoàn thành
@@ -1386,11 +1402,14 @@ function calculateScore() {
     
     const pointsPerCell = baseScores[gameState.difficulty] || 10;
     
-    // Tính số ô đã điền đúng
+    // Tính số ô người chơi đã điền đúng (không tính ô có sẵn từ đầu)
     let correctCells = 0;
     for (let row = 0; row < 9; row++) {
         for (let col = 0; col < 9; col++) {
-            if (gameState.board[row][col] !== 0 && isValidMove(row, col, gameState.board[row][col])) {
+            // Chỉ tính ô mà người chơi điền (không phải ô có sẵn từ đầu)
+            if (gameState.originalBoard[row][col] === 0 && 
+                gameState.board[row][col] !== 0 && 
+                isValidMove(row, col, gameState.board[row][col])) {
                 correctCells++;
             }
         }
