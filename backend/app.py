@@ -68,7 +68,7 @@ def validate_move():
 @app.route('/api/get-hint', methods=['POST'])
 def get_hint():
     """
-    Lấy gợi ý cho ô được chỉ định
+    Lấy gợi ý cho ô được chỉ định - sử dụng thuật toán giải sudoku
     """
     try:
         data = request.json
@@ -90,14 +90,14 @@ def get_hint():
                 'error': 'Trạng thái bảng không hợp lệ'
             })
         
-        # Thử gợi ý thông minh trước
-        hint = solver.get_smart_hint(board, row, col)
+        # Tạo bản sao board để giải
+        solution_board = copy.deepcopy(board)
         
-        # Nếu không có gợi ý thông minh, thử gợi ý thường
-        if hint is None:
-            hint = solver.get_hint(board, row, col)
-        
-        if hint is not None:
+        # Sử dụng thuật toán solve để giải hoàn toàn puzzle
+        if solver.solve(solution_board):
+            # Lấy số từ solution tại vị trí được yêu cầu
+            hint = solution_board[row][col]
+            
             return jsonify({
                 'success': True,
                 'hint': hint
@@ -105,7 +105,7 @@ def get_hint():
         else:
             return jsonify({
                 'success': False,
-                'error': 'Không thể tìm gợi ý cho ô này'
+                'error': 'Không thể gợi ý với trạng thái hiện tại'
             })
     
     except Exception as e:
