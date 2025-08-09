@@ -1579,6 +1579,7 @@ function retryGame() {
     gameState.score = 0;
     gameState.gameHistory = [];
     gameState.cellNotes = {};
+    gameState.isCompleted = false; // Reset flag hoàn thành
     
     // Cập nhật giao diện
     updateBoard();

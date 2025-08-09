@@ -82,6 +82,12 @@
     },
     {
       "difficulty": "easy",
+      "time": 3,
+      "score": 997,
+      "date": "2025-08-09T18:49:49.365459"
+    },
+    {
+      "difficulty": "easy",
       "time": 4,
       "score": 996,
       "date": "2025-08-09T18:09:31.366785"
@@ -106,21 +112,15 @@
     },
     {
       "difficulty": "easy",
+      "time": 9,
+      "score": 991,
+      "date": "2025-08-09T18:50:04.547311"
+    },
+    {
+      "difficulty": "easy",
       "time": 10,
       "score": 990,
       "date": "2025-08-09T17:52:24.950175"
-    },
-    {
-      "difficulty": "easy",
-      "time": 11,
-      "score": 989,
-      "date": "2025-08-09T17:41:32.219533"
-    },
-    {
-      "difficulty": "easy",
-      "time": 11,
-      "score": 989,
-      "date": "2025-08-09T18:16:00.442471"
     }
   ],
   "medium": [
@@ -180,9 +180,9 @@
     },
     {
       "difficulty": "medium",
-      "time": 8,
-      "score": 1492,
-      "date": "2025-08-09T18:16:27.545036"
+      "time": 7,
+      "score": 1493,
+      "date": "2025-08-09T18:51:13.779670"
     }
   ]
 }
