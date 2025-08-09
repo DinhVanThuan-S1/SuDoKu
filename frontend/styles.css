@@ -719,6 +719,45 @@ body.dark-theme {
     min-width: 120px;
 }
 
+/* Score breakdown styles */
+.score-breakdown {
+    background: var(--bg-tertiary);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.score-breakdown h4 {
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.score-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.score-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid var(--border-color);
+    font-size: 1.2rem;
+}
+
+.score-label {
+    color: var(--text-secondary);
+}
+
+.score-value {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
 /* Loading overlay */
 .loading-overlay {
     position: fixed;

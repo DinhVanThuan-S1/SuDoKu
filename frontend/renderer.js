@@ -1484,7 +1484,7 @@ async function solvePuzzle() {
 }
 
 /**
- * Tính điểm
+ * Tính điểm theo ô (trong lúc chơi)
  */
 function calculateScore() {
     const baseScores = {
@@ -1509,6 +1509,55 @@ function calculateScore() {
     }
     
     gameState.score = correctCells * pointsPerCell;
+}
+
+/**
+ * Tính điểm cuối game với bonus
+ */
+function calculateFinalScore() {
+    // Điểm cơ bản từ việc điền ô
+    calculateScore();
+    let finalScore = gameState.score;
+    
+    // Điểm hoàn thành theo độ khó
+    const completionBonus = {
+        'easy': 300,
+        'medium': 500,
+        'hard': 800
+    };
+    finalScore += completionBonus[gameState.difficulty] || 500;
+    
+    // Bonus tốc độ (theo phút)
+    const timeInMinutes = Math.floor(gameState.elapsedTime / 60);
+    let speedBonus = 0;
+    if (timeInMinutes < 5) {
+        speedBonus = 200;
+    } else if (timeInMinutes < 10) {
+        speedBonus = 100;
+    } else if (timeInMinutes < 15) {
+        speedBonus = 50;
+    }
+    finalScore += speedBonus;
+    
+    // Bonus chính xác (theo số lỗi)
+    let accuracyBonus = 0;
+    if (gameState.errors === 0) {
+        accuracyBonus = 100;
+    } else if (gameState.errors === 1) {
+        accuracyBonus = 50;
+    }
+    finalScore += accuracyBonus;
+    
+    // Cập nhật điểm cuối
+    gameState.score = finalScore;
+    
+    return {
+        baseScore: gameState.score - completionBonus[gameState.difficulty] - speedBonus - accuracyBonus,
+        completionBonus: completionBonus[gameState.difficulty],
+        speedBonus: speedBonus,
+        accuracyBonus: accuracyBonus,
+        finalScore: finalScore
+    };
 }
 
 /**
@@ -1549,8 +1598,8 @@ async function handleGameWin() {
     // Đánh dấu game đã hoàn thành
     gameState.isCompleted = true;
     
-    // Tính điểm cuối
-    calculateScore();
+    // Tính điểm cuối với bonus
+    const scoreDetails = calculateFinalScore();
     
     try {
         // Lưu điểm
@@ -1614,6 +1663,9 @@ function showGameOverModal(isWin) {
         title.textContent = 'Chúc mừng!';
         title.style.color = 'var(--success-color)';
         
+        // Lấy chi tiết điểm số từ calculateFinalScore
+        const scoreDetails = calculateFinalScore();
+        
         content.innerHTML = `
             <h3>Bạn đã hoàn thành puzzle!</h3>
             <div class="game-over-stats">
@@ -1629,9 +1681,28 @@ function showGameOverModal(isWin) {
                     <span class="stat-label">Lỗi:</span>
                     <span class="stat-value">${gameState.errors}</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-label">Điểm số:</span>
-                    <span class="stat-value">${gameState.score}</span>
+            </div>
+            <div class="score-breakdown">
+                <h4>Chi tiết điểm số:</h4>
+                <div class="score-item">
+                    <span class="score-label">Điểm từ các ô:</span>
+                    <span class="score-value">+${scoreDetails.baseScore}</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Hoàn thành puzzle:</span>
+                    <span class="score-value">+${scoreDetails.completionBonus}</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Bonus tốc độ:</span>
+                    <span class="score-value">+${scoreDetails.speedBonus}</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Bonus chính xác:</span>
+                    <span class="score-value">+${scoreDetails.accuracyBonus}</span>
+                </div>
+                <div class="score-total">
+                    <span class="score-label"><strong>Tổng điểm:</strong></span>
+                    <span class="score-value"><strong>${scoreDetails.finalScore}</strong></span>
                 </div>
             </div>
         `;
