@@ -279,12 +279,7 @@ def save_score():
         difficulty = data['difficulty']
         time_seconds = data['time']
         errors = data.get('errors', 0)
-        
-        # Sử dụng điểm từ frontend nếu có, nếu không thì tính theo cách cũ
-        if 'score' in data:
-            score = data['score']  # Điểm đã được tính ở frontend
-        else:
-            score = game_state.calculate_score(time_seconds, difficulty, errors)  # Fallback
+        score = data['score']  # Điểm được tính ở frontend
             
         success = game_state.save_score(difficulty, time_seconds, score)
         

@@ -82,28 +82,6 @@ class GameState:
             print(f"Lỗi khi tải điểm: {e}")
             return {}
     
-    def calculate_score(self, time_seconds, difficulty, errors):
-        """
-        Tính điểm dựa trên thời gian, mức độ và số lỗi
-        """
-        base_scores = {
-            'easy': 1000,
-            'medium': 1500,
-            'hard': 2000
-        }
-        
-        base_score = base_scores.get(difficulty, 1000)
-        
-        # Trừ điểm theo thời gian (mỗi giây trừ 1 điểm)
-        time_penalty = min(time_seconds, base_score // 2)
-        
-        # Trừ điểm theo lỗi (mỗi lỗi trừ 100 điểm)
-        error_penalty = errors * 100
-        
-        final_score = max(base_score - time_penalty - error_penalty, 0)
-        
-        return final_score
-    
     def clear_saved_game(self):
         """
         Xóa trạng thái game đã lưu

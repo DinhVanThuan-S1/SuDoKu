@@ -8,12 +8,24 @@
     },
     {
       "difficulty": "hard",
+      "time": 3,
+      "score": 2120,
+      "date": "2025-08-09T20:04:11.606902"
+    },
+    {
+      "difficulty": "hard",
       "time": 2,
       "score": 1998,
       "date": "2025-08-09T19:56:54.613243"
     }
   ],
   "medium": [
+    {
+      "difficulty": "medium",
+      "time": 11,
+      "score": 1535,
+      "date": "2025-08-09T20:06:06.766091"
+    },
     {
       "difficulty": "medium",
       "time": 30,
@@ -25,6 +37,20 @@
       "time": 2,
       "score": 1498,
       "date": "2025-08-09T19:57:19.081155"
+    }
+  ],
+  "easy": [
+    {
+      "difficulty": "easy",
+      "time": 2,
+      "score": 1050,
+      "date": "2025-08-09T20:03:58.572752"
+    },
+    {
+      "difficulty": "easy",
+      "time": 22,
+      "score": 1050,
+      "date": "2025-08-09T20:04:54.379012"
     }
   ]
 }
