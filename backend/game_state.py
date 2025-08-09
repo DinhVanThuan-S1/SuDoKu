@@ -103,3 +103,15 @@ class GameState:
         final_score = max(base_score - time_penalty - error_penalty, 0)
         
         return final_score
+    
+    def clear_saved_game(self):
+        """
+        Xóa trạng thái game đã lưu
+        """
+        try:
+            if os.path.exists(self.save_file):
+                os.remove(self.save_file)
+            return True
+        except Exception as e:
+            print(f"Lỗi khi xóa game đã lưu: {e}")
+            return False

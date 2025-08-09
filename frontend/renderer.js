@@ -23,7 +23,8 @@ let gameState = {
     score: 0,
     isNoteMode: false,
     gameHistory: [], // Lưu lịch sử các nước đi để hoàn tác
-    cellNotes: {} // Lưu ghi chú của từng ô
+    cellNotes: {}, // Lưu ghi chú của từng ô
+    isCompleted: false // Flag để track game đã hoàn thành
 };
 
 // UI Elements
@@ -508,7 +509,8 @@ async function startNewGame(difficulty) {
                 score: 0,
                 isNoteMode: false,
                 gameHistory: [],
-                cellNotes: {}
+                cellNotes: {},
+                isCompleted: false
             };
             
             // Cập nhật giao diện
@@ -558,6 +560,7 @@ async function continueGame() {
                 isNoteMode: false,
                 gameHistory: [],
                 cellNotes: {},
+                isCompleted: false,
                 ...data.game_data,
                 timerInterval: null,
                 isPaused: false,
@@ -627,8 +630,11 @@ async function backToMenu() {
         gameState.timerInterval = null;
     }
     
-    // Lưu game trước khi thoát
-    await saveGame();
+    // Chỉ lưu game nếu chưa hoàn thành
+    if (!gameState.isCompleted) {
+        await saveGame();
+    }
+    
     showMainScreen();
 }
 
@@ -1428,6 +1434,9 @@ async function handleGameWin() {
         gameState.timerInterval = null;
     }
     
+    // Đánh dấu game đã hoàn thành
+    gameState.isCompleted = true;
+    
     // Tính điểm cuối
     calculateScore();
     
@@ -1450,6 +1459,15 @@ async function handleGameWin() {
         if (data.success) {
             gameState.score = data.score;
         }
+        
+        // Xóa saved game vì đã hoàn thành
+        await fetch(`${API_BASE}/clear-game`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
     } catch (error) {
         console.error('Lỗi lưu điểm:', error);
     }

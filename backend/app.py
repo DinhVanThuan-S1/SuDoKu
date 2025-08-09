@@ -254,6 +254,21 @@ def load_game():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/api/clear-game', methods=['POST'])
+def clear_game():
+    """
+    Xóa trạng thái game đã lưu
+    """
+    try:
+        game_state.clear_saved_game()
+        
+        return jsonify({
+            'success': True
+        })
+    
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 @app.route('/api/save-score', methods=['POST'])
 def save_score():
     """
