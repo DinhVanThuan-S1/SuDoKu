@@ -1220,7 +1220,7 @@ function saveStateForUndo() {
     const state = {
         board: JSON.parse(JSON.stringify(gameState.board)),
         cellNotes: JSON.parse(JSON.stringify(gameState.cellNotes)),
-        errors: gameState.errors,
+        // Không lưu errors - lỗi không được hoàn tác
         score: gameState.score
     };
     
@@ -1239,10 +1239,23 @@ function undoMove() {
     if (gameState.gameHistory.length === 0 || gameState.isPaused) return;
     
     const previousState = gameState.gameHistory.pop();
+    
     gameState.board = previousState.board;
     gameState.cellNotes = previousState.cellNotes;
-    gameState.errors = previousState.errors;
+    // Không hoàn tác errors - lỗi phải chịu hậu quả
     gameState.score = previousState.score;
+    
+    // Clear selected cell sau khi hoàn tác
+    gameState.selectedCell = null;
+    gameState.selectedNumber = null;
+    
+    // Clear tất cả highlights
+    document.querySelectorAll('.sudoku-cell').forEach(cell => {
+        cell.classList.remove('selected', 'highlighted', 'same-number');
+    });
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     
     updateBoard();
     updateNumberPad();
