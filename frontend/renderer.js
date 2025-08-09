@@ -12,6 +12,7 @@ let gameState = {
     originalBoard: [],
     solution: [],
     selectedCell: null,
+    selectedNumber: null, // Track số được chọn từ number pad
     difficulty: 'medium',
     startTime: null,
     elapsedTime: 0,
@@ -410,7 +411,15 @@ function createNumberPad() {
             <span class="number-remaining" id="remaining-${num}">9</span>
         `;
         
-        btn.addEventListener('click', () => inputNumber(num));
+        btn.addEventListener('click', () => {
+            // Nếu có ô được chọn, điền số vào ô đó
+            if (gameState.selectedCell) {
+                inputNumber(num);
+            } else {
+                // Nếu không có ô được chọn, chỉ highlight số trên lưới
+                selectNumberForHighlight(num);
+            }
+        });
         numberPad.appendChild(btn);
     }
     
@@ -505,6 +514,7 @@ async function startNewGame(difficulty) {
                 originalBoard: JSON.parse(JSON.stringify(data.original_puzzle)),
                 solution: JSON.parse(JSON.stringify(data.solution)),
                 selectedCell: null,
+                selectedNumber: null,
                 difficulty: difficulty,
                 startTime: Date.now(),
                 elapsedTime: 0,
@@ -558,6 +568,7 @@ async function continueGame() {
                 originalBoard: [],
                 solution: [],
                 selectedCell: null,
+                selectedNumber: null,
                 difficulty: 'medium',
                 startTime: Date.now(),
                 elapsedTime: 0,
@@ -665,21 +676,38 @@ function selectCell(row, col) {
         cell.classList.remove('selected', 'highlighted', 'same-number');
     });
     
-    // Chọn ô mới
-    gameState.selectedCell = { row, col };
-    const cellIndex = row * 9 + col;
-    const selectedCell = document.querySelector(`[data-index="${cellIndex}"]`);
+    // Clear number pad selection
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     
-    if (selectedCell) {
-        selectedCell.classList.add('selected');
+    // Clear selected number
+    gameState.selectedNumber = null;
+    
+    // Kiểm tra xem có phải ô có số có sẵn không
+    const isOriginalCell = gameState.originalBoard[row][col] !== 0;
+    const cellValue = gameState.board[row][col];
+    
+    if (isOriginalCell && cellValue !== 0) {
+        // Nếu là ô có số có sẵn, chỉ highlight số đó, không select ô
+        gameState.selectedCell = null;
+        selectNumberForHighlight(cellValue);
+    } else {
+        // Nếu là ô trống hoặc ô người chơi điền, thì select ô bình thường
+        gameState.selectedCell = { row, col };
+        const cellIndex = row * 9 + col;
+        const selectedCell = document.querySelector(`[data-index="${cellIndex}"]`);
         
-        // Highlight hàng, cột và khối 3x3
-        highlightRelatedCells(row, col);
-        
-        // Highlight các ô có cùng số
-        const cellValue = gameState.board[row][col];
-        if (cellValue !== 0) {
-            highlightSameNumbers(cellValue);
+        if (selectedCell) {
+            selectedCell.classList.add('selected');
+            
+            // Highlight hàng, cột và khối 3x3
+            highlightRelatedCells(row, col);
+            
+            // Highlight các ô có cùng số nếu ô có số
+            if (cellValue !== 0) {
+                highlightSameNumbers(cellValue);
+            }
         }
     }
 }
@@ -725,6 +753,34 @@ function highlightSameNumbers(number) {
 }
 
 /**
+ * Chọn số để highlight trên lưới
+ */
+function selectNumberForHighlight(number) {
+    // Clear previous highlights
+    document.querySelectorAll('.sudoku-cell').forEach(cell => {
+        cell.classList.remove('selected', 'highlighted', 'same-number');
+    });
+    
+    // Clear number pad selection
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Set selected number
+    gameState.selectedNumber = number;
+    gameState.selectedCell = null; // Clear cell selection
+    
+    // Highlight selected number button
+    const selectedBtn = document.querySelector(`[data-number="${number}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
+    
+    // Highlight all cells with this number
+    highlightSameNumbers(number);
+}
+
+/**
  * Nhập số vào ô được chọn
  */
 async function inputNumber(number) {
@@ -750,6 +806,18 @@ async function inputNumber(number) {
     updateBoard();
     updateNumberPad();
     updateGameInfo();
+    
+    // Clear selected cell và number sau khi điền số thành công
+    gameState.selectedCell = null;
+    gameState.selectedNumber = null;
+    
+    // Clear tất cả highlights
+    document.querySelectorAll('.sudoku-cell').forEach(cell => {
+        cell.classList.remove('selected', 'highlighted', 'same-number');
+    });
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     
     // Kiểm tra hoàn thành
     await checkGameComplete();
@@ -1308,6 +1376,18 @@ async function getHint() {
             updateNumberPad();
             updateGameInfo();
             
+            // Clear selected cell sau khi gợi ý thành công
+            gameState.selectedCell = null;
+            gameState.selectedNumber = null;
+            
+            // Clear tất cả highlights
+            document.querySelectorAll('.sudoku-cell').forEach(cell => {
+                cell.classList.remove('selected', 'highlighted', 'same-number');
+            });
+            document.querySelectorAll('.number-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
             await checkGameComplete();
             
             // Thông báo kèm số lượt còn lại
@@ -1571,6 +1651,7 @@ function retryGame() {
     // Reset board về trạng thái ban đầu
     gameState.board = JSON.parse(JSON.stringify(gameState.originalBoard));
     gameState.selectedCell = null;
+    gameState.selectedNumber = null; // Reset số được chọn
     gameState.startTime = Date.now();
     gameState.elapsedTime = 0;
     gameState.isPaused = false;
@@ -1580,6 +1661,14 @@ function retryGame() {
     gameState.gameHistory = [];
     gameState.cellNotes = {};
     gameState.isCompleted = false; // Reset flag hoàn thành
+    
+    // Clear highlights and selections
+    document.querySelectorAll('.sudoku-cell').forEach(cell => {
+        cell.classList.remove('selected', 'highlighted', 'same-number');
+    });
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     
     // Cập nhật giao diện
     updateBoard();

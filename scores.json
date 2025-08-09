@@ -162,27 +162,27 @@
     },
     {
       "difficulty": "medium",
+      "time": 2,
+      "score": 1498,
+      "date": "2025-08-09T18:57:51.172613"
+    },
+    {
+      "difficulty": "medium",
       "time": 3,
       "score": 1497,
       "date": "2025-08-09T18:26:17.164612"
     },
     {
       "difficulty": "medium",
+      "time": 3,
+      "score": 1497,
+      "date": "2025-08-09T18:57:39.708493"
+    },
+    {
+      "difficulty": "medium",
       "time": 4,
       "score": 1496,
       "date": "2025-08-09T18:41:22.018298"
-    },
-    {
-      "difficulty": "medium",
-      "time": 4,
-      "score": 1496,
-      "date": "2025-08-09T18:43:39.190530"
-    },
-    {
-      "difficulty": "medium",
-      "time": 7,
-      "score": 1493,
-      "date": "2025-08-09T18:51:13.779670"
     }
   ]
 }

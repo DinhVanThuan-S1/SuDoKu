@@ -463,6 +463,13 @@ body.dark-theme {
     transform: scale(1.1);
 }
 
+.number-btn.selected {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
 .number-remaining {
     font-size: 0.7rem;
     color: var(--text-secondary);
