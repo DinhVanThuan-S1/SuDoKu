@@ -36,6 +36,13 @@
       "score": 0,
       "date": "2025-08-09T20:23:49.021747",
       "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "hard",
+      "time": 11,
+      "score": 0,
+      "date": "2025-08-10T13:03:22.440057",
+      "solved_by_algorithm": true
     }
   ],
   "medium": [
@@ -75,6 +82,34 @@
       "time": 35,
       "score": 0,
       "date": "2025-08-09T20:24:55.202480",
+      "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "medium",
+      "time": 17,
+      "score": 0,
+      "date": "2025-08-10T21:08:04.088898",
+      "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "medium",
+      "time": 2,
+      "score": 0,
+      "date": "2025-08-10T23:00:33.092791",
+      "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "medium",
+      "time": 393,
+      "score": 0,
+      "date": "2025-08-10T23:37:56.363680",
+      "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "medium",
+      "time": 16,
+      "score": 0,
+      "date": "2025-08-13T20:21:50.770284",
       "solved_by_algorithm": true
     }
   ],

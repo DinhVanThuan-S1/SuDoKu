@@ -33,9 +33,9 @@ class SudokuGenerator:
         
         return True
     
-    def solve_sudoku(self, board):
+    def fill_board_randomly(self, board):
         """
-        Giải Sudoku bằng thuật toán vét cạn (backtracking)
+        Điền bảng Sudoku ngẫu nhiên bằng thuật toán vét cạn (backtracking)
         """
         for i in range(9):
             for j in range(9):
@@ -46,7 +46,7 @@ class SudokuGenerator:
                     for num in numbers:
                         if self.is_valid(board, i, j, num):
                             board[i][j] = num
-                            if self.solve_sudoku(board):
+                            if self.fill_board_randomly(board):
                                 return True
                             board[i][j] = 0
                     return False
@@ -57,7 +57,7 @@ class SudokuGenerator:
         Tạo bảng Sudoku hoàn chỉnh
         """
         self.board = [[0 for _ in range(9)] for _ in range(9)]
-        self.solve_sudoku(self.board)
+        self.fill_board_randomly(self.board)
         return copy.deepcopy(self.board)
     
     def remove_numbers(self, board, difficulty):
