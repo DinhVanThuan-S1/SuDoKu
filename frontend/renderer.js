@@ -6,6 +6,14 @@
 // API Configuration
 const API_BASE = 'http://localhost:5000/api';
 
+// Common messages
+const MESSAGES = {
+    CONNECTION_ERROR: 'Lỗi kết nối server',
+    CONNECTION_ERROR_RETRY: 'Lỗi kết nối server - Hãy thử lại',
+    CANNOT_INIT_APP: 'Không thể khởi tạo ứng dụng',
+    BOARD_VALIDATION_ERROR: 'Hãy kiểm tra lại các số đã điền - có thể có số trùng lặp trong hàng, cột hoặc khối 3x3'
+};
+
 // Game State Variables
 let gameState = {
     board: [],
@@ -216,7 +224,7 @@ async function initializeApp() {
         console.log('Ứng dụng đã khởi tạo thành công');
     } catch (error) {
         console.error('Lỗi khởi tạo ứng dụng:', error);
-        showError('Không thể khởi tạo ứng dụng');
+        showError(MESSAGES.CANNOT_INIT_APP);
     }
 }
 
@@ -544,7 +552,7 @@ async function startNewGame(difficulty) {
         }
     } catch (error) {
         console.error('Lỗi tạo game mới:', error);
-        showError('Lỗi kết nối server');
+        showError(MESSAGES.CONNECTION_ERROR);
     } finally {
         showLoading(false);
     }
@@ -603,7 +611,7 @@ async function continueGame() {
         }
     } catch (error) {
         console.error('Lỗi tải game:', error);
-        showError('Lỗi kết nối server');
+        showError(MESSAGES.CONNECTION_ERROR);
     } finally {
         showLoading(false);
     }
@@ -669,20 +677,25 @@ async function backToMenu() {
 }
 
 /**
+ * Clear tất cả highlights và selections
+ */
+function clearHighlights() {
+    document.querySelectorAll('.sudoku-cell').forEach(cell => {
+        cell.classList.remove('selected', 'highlighted', 'same-number');
+    });
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+}
+
+/**
  * Chọn ô trong lưới
  */
 function selectCell(row, col) {
     if (gameState.isPaused) return;
     
-    // Bỏ chọn ô hiện tại
-    document.querySelectorAll('.sudoku-cell').forEach(cell => {
-        cell.classList.remove('selected', 'highlighted', 'same-number');
-    });
-    
-    // Clear number pad selection
-    document.querySelectorAll('.number-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    // Clear tất cả highlights
+    clearHighlights();
     
     // Clear selected number
     gameState.selectedNumber = null;
@@ -760,14 +773,7 @@ function highlightSameNumbers(number) {
  */
 function selectNumberForHighlight(number) {
     // Clear previous highlights
-    document.querySelectorAll('.sudoku-cell').forEach(cell => {
-        cell.classList.remove('selected', 'highlighted', 'same-number');
-    });
-    
-    // Clear number pad selection
-    document.querySelectorAll('.number-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    clearHighlights();
     
     // Set selected number
     gameState.selectedNumber = number;
@@ -815,12 +821,7 @@ async function inputNumber(number) {
     gameState.selectedNumber = null;
     
     // Clear tất cả highlights
-    document.querySelectorAll('.sudoku-cell').forEach(cell => {
-        cell.classList.remove('selected', 'highlighted', 'same-number');
-    });
-    document.querySelectorAll('.number-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    clearHighlights();
     
     // Kiểm tra hoàn thành
     await checkGameComplete();
@@ -1253,12 +1254,7 @@ function undoMove() {
     gameState.selectedNumber = null;
     
     // Clear tất cả highlights
-    document.querySelectorAll('.sudoku-cell').forEach(cell => {
-        cell.classList.remove('selected', 'highlighted', 'same-number');
-    });
-    document.querySelectorAll('.number-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    clearHighlights();
     
     updateBoard();
     updateNumberPad();
@@ -1397,12 +1393,7 @@ async function getHint() {
             gameState.selectedNumber = null;
             
             // Clear tất cả highlights
-            document.querySelectorAll('.sudoku-cell').forEach(cell => {
-                cell.classList.remove('selected', 'highlighted', 'same-number');
-            });
-            document.querySelectorAll('.number-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            clearHighlights();
             
             await checkGameComplete();
             
@@ -1417,12 +1408,12 @@ async function getHint() {
             
             // Nếu lỗi do board không hợp lệ, gợi ý người chơi kiểm tra lại
             if (errorMsg.includes('không hợp lệ')) {
-                showError('Hãy kiểm tra lại các số đã điền - có thể có số trùng lặp trong hàng, cột hoặc khối 3x3');
+                showError(MESSAGES.BOARD_VALIDATION_ERROR);
             }
         }
     } catch (error) {
         console.error('Lỗi lấy gợi ý:', error);
-        showError('Lỗi kết nối server - Hãy thử lại');
+        showError(MESSAGES.CONNECTION_ERROR_RETRY);
     } finally {
         showLoading(false);
     }
@@ -1472,7 +1463,7 @@ async function solvePuzzle() {
             
             // Cung cấp gợi ý cho người chơi
             if (errorMsg.includes('không hợp lệ') || errorMsg.includes('trùng lặp')) {
-                showError('Hãy kiểm tra lại các số đã điền - có thể có số trùng lặp trong hàng, cột hoặc khối 3x3');
+                showError(MESSAGES.BOARD_VALIDATION_ERROR);
             } else if (errorMsg.includes('không có số hợp lệ')) {
                 showError('Có một số ô không thể điền số nào. Hãy thử hoàn tác vài bước và điền lại');
             } else {
@@ -1481,7 +1472,7 @@ async function solvePuzzle() {
         }
     } catch (error) {
         console.error('Lỗi giải puzzle:', error);
-        showError('Lỗi kết nối server - Hãy thử lại');
+        showError(MESSAGES.CONNECTION_ERROR_RETRY);
     } finally {
         showLoading(false);
     }
@@ -1771,12 +1762,7 @@ function retryGame() {
     gameState.isSolvedByAlgorithm = false; // Reset flag giải bằng thuật toán
     
     // Clear highlights and selections
-    document.querySelectorAll('.sudoku-cell').forEach(cell => {
-        cell.classList.remove('selected', 'highlighted', 'same-number');
-    });
-    document.querySelectorAll('.number-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    clearHighlights();
     
     // Cập nhật giao diện
     updateBoard();
@@ -1819,7 +1805,7 @@ async function showScoresModal() {
         }
     } catch (error) {
         console.error('Lỗi tải bảng điểm:', error);
-        showError('Lỗi kết nối server');
+        showError(MESSAGES.CONNECTION_ERROR);
     } finally {
         showLoading(false);
     }
@@ -1901,24 +1887,43 @@ function showLoading(show) {
 }
 
 /**
+ * Hiển thị thông báo với type khác nhau
+ */
+function showMessage(message, type = 'info') {
+    const icons = {
+        error: '❌',
+        success: '✅',
+        info: 'ℹ️'
+    };
+    
+    const prefixes = {
+        error: 'Lỗi: ',
+        success: 'Thành công: ',
+        info: 'Thông tin: '
+    };
+    
+    alert(`${icons[type]} ${prefixes[type]}${message}`);
+}
+
+/**
  * Hiển thị thông báo lỗi
  */
 function showError(message) {
-    alert('❌ Lỗi: ' + message);
+    showMessage(message, 'error');
 }
 
 /**
  * Hiển thị thông báo thành công
  */
 function showSuccess(message) {
-    alert('✅ Thành công: ' + message);
+    showMessage(message, 'success');
 }
 
 /**
  * Hiển thị thông báo thông tin
  */
 function showInfo(message) {
-    alert('ℹ️ Thông tin: ' + message);
+    showMessage(message, 'info');
 }
 
 /**
