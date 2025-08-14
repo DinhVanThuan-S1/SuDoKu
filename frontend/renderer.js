@@ -1050,7 +1050,6 @@ function updateTimeDisplay() {
     }
 }
 
-// Tiếp tục phần còn lại...
 /**
  * Tạm dừng/tiếp tục game (tối ưu hiệu suất)
  */
