@@ -1,19 +1,6 @@
-const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-
-// Hot reload trong development mode
-if (process.argv.includes('--reload')) {
-    try {
-        require('electron-reload')(__dirname, {
-            electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron'),
-            hardResetMethod: 'exit'
-        });
-        console.log('Hot reload đã được kích hoạt');
-    } catch (error) {
-        console.log('Không thể kích hoạt hot reload:', error.message);
-    }
-}
 
 let mainWindow;
 let flaskProcess;
@@ -63,35 +50,6 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
-
-    // Mở DevTools trong chế độ development
-    if (process.argv.includes('--dev')) {
-        mainWindow.webContents.openDevTools();
-    }
-
-    // Đăng ký phím tắt reload trong development mode
-    if (process.argv.includes('--dev') || process.argv.includes('--reload')) {
-        globalShortcut.register('F5', () => {
-            console.log('F5 pressed - Reloading window...');
-            mainWindow.reload();
-        });
-
-        globalShortcut.register('Ctrl+R', () => {
-            console.log('Ctrl+R pressed - Reloading window...');
-            mainWindow.reload();
-        });
-
-        globalShortcut.register('Ctrl+Shift+R', () => {
-            console.log('Ctrl+Shift+R pressed - Hard reload...');
-            mainWindow.webContents.reloadIgnoringCache();
-        });
-
-        // Đăng ký phím tắt để toggle DevTools
-        globalShortcut.register('F12', () => {
-            console.log('F12 pressed - Toggle DevTools...');
-            mainWindow.webContents.toggleDevTools();
-        });
-    }
 }
 
 /**
@@ -117,9 +75,6 @@ app.whenReady().then(() => {
  * Thoát app khi tất cả cửa sổ đã đóng
  */
 app.on('window-all-closed', () => {
-    // Hủy đăng ký tất cả phím tắt
-    globalShortcut.unregisterAll();
-    
     // Đóng Flask server
     if (flaskProcess) {
         flaskProcess.kill();
@@ -135,22 +90,6 @@ app.on('window-all-closed', () => {
  */
 ipcMain.handle('get-app-version', () => {
     return app.getVersion();
-});
-
-// Xử lý reload từ renderer
-ipcMain.handle('reload-app', () => {
-    if (mainWindow) {
-        console.log('Reload requested from renderer...');
-        mainWindow.reload();
-    }
-});
-
-// Xử lý toggle DevTools từ renderer  
-ipcMain.handle('toggle-devtools', () => {
-    if (mainWindow) {
-        console.log('Toggle DevTools requested from renderer...');
-        mainWindow.webContents.toggleDevTools();
-    }
 });
 
 // Xử lý thoát app

@@ -86,122 +86,7 @@ const elements = {
  */
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
-    initializeDeveloperFeatures();
 });
-
-/**
- * Khởi tạo các tính năng dành cho developer
- */
-function initializeDeveloperFeatures() {
-    // Kiểm tra xem có đang ở chế độ development không
-    const isDev = new URLSearchParams(window.location.search).get('dev') === 'true' || 
-                  process?.argv?.includes('--dev') || 
-                  process?.argv?.includes('--reload');
-    
-    if (isDev) {
-        // Hiển thị nút reload
-        const reloadBtn = document.getElementById('reload-btn');
-        if (reloadBtn) {
-            reloadBtn.style.display = 'block';
-            reloadBtn.addEventListener('click', reloadApp);
-        }
-        
-        // Thêm các phím tắt
-        document.addEventListener('keydown', handleDevKeyboard);
-        
-        console.log('🔧 Developer mode đã được kích hoạt');
-        console.log('📋 Phím tắt:');
-        console.log('   F5 hoặc Ctrl+R: Reload');
-        console.log('   Ctrl+Shift+R: Hard reload');
-        console.log('   F12: Toggle DevTools');
-    }
-}
-
-/**
- * Xử lý phím tắt cho developer
- */
-function handleDevKeyboard(event) {
-    // F5 - Reload
-    if (event.key === 'F5') {
-        event.preventDefault();
-        reloadApp();
-    }
-    
-    // Ctrl+R - Reload
-    if (event.ctrlKey && event.key === 'r' && !event.shiftKey) {
-        event.preventDefault();
-        reloadApp();
-    }
-    
-    // Ctrl+Shift+R - Hard reload
-    if (event.ctrlKey && event.shiftKey && event.key === 'R') {
-        event.preventDefault();
-        hardReloadApp();
-    }
-    
-    // F12 - Toggle DevTools
-    if (event.key === 'F12') {
-        event.preventDefault();
-        toggleDevTools();
-    }
-}
-
-/**
- * Reload ứng dụng
- */
-async function reloadApp() {
-    try {
-        console.log('🔄 Đang reload ứng dụng...');
-        
-        // Nếu đang chạy trong Electron
-        if (window.require) {
-            const { ipcRenderer } = window.require('electron');
-            await ipcRenderer.invoke('reload-app');
-        } else {
-            // Fallback cho browser
-            window.location.reload();
-        }
-    } catch (error) {
-        console.error('Lỗi khi reload:', error);
-        window.location.reload(); // Fallback
-    }
-}
-
-/**
- * Hard reload ứng dụng (bỏ qua cache)
- */
-async function hardReloadApp() {
-    try {
-        console.log('🔄 Đang hard reload ứng dụng...');
-        
-        // Nếu đang chạy trong Electron
-        if (window.require) {
-            const { ipcRenderer } = window.require('electron');
-            // Xóa cache trước khi reload
-            await ipcRenderer.invoke('reload-app');
-        } else {
-            // Fallback cho browser
-            window.location.reload(true);
-        }
-    } catch (error) {
-        console.error('Lỗi khi hard reload:', error);
-        window.location.reload(true); // Fallback
-    }
-}
-
-/**
- * Toggle DevTools
- */
-async function toggleDevTools() {
-    try {
-        if (window.require) {
-            const { ipcRenderer } = window.require('electron');
-            await ipcRenderer.invoke('toggle-devtools');
-        }
-    } catch (error) {
-        console.error('Lỗi khi toggle DevTools:', error);
-    }
-}
 
 /**
  * Khởi tạo ứng dụng
@@ -1625,11 +1510,6 @@ async function handleGameWin() {
         });
         
         const data = await response.json();
-        
-        // Không cần ghi đè score nữa vì đã tính đúng ở frontend
-        // if (data.success) {
-        //     gameState.score = data.score;
-        // }
         
         // Xóa saved game vì đã hoàn thành
         await fetch(`${API_BASE}/clear-game`, {
