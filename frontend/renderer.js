@@ -175,12 +175,12 @@ function initializeEventListeners() {
         });
     });
     
-    // Keyboard shortcuts
+    // Keyboard input for numbers only
     document.addEventListener('keydown', handleKeyboard);
 }
 
 /**
- * Xử lý phím tắt
+ * Xử lý nhập số từ bàn phím
  */
 function handleKeyboard(e) {
     if (!elements.screens.game.classList.contains('active')) return;
@@ -203,64 +203,6 @@ function handleKeyboard(e) {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
         e.preventDefault();
         eraseCell();
-    }
-    
-    // Hoàn tác (Ctrl+Z)
-    if (e.ctrlKey && e.key === 'z') {
-        e.preventDefault();
-        undoMove();
-    }
-    
-    // Ghi chú (N key)
-    if (e.key === 'n' || e.key === 'N') {
-        toggleNoteMode();
-    }
-    
-    // Gợi ý (H key)
-    if (e.key === 'h' || e.key === 'H') {
-        getHint();
-    }
-    
-    // Tạm dừng (P key)
-    if (e.key === 'p' || e.key === 'P') {
-        e.preventDefault();
-        togglePause();
-    }
-    
-    // Di chuyển với mũi tên
-    if (gameState.selectedCell && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        e.preventDefault();
-        moveSelection(e.key);
-    }
-}
-
-/**
- * Di chuyển ô được chọn bằng phím mũi tên
- */
-function moveSelection(direction) {
-    if (!gameState.selectedCell) return;
-    
-    const { row, col } = gameState.selectedCell;
-    let newRow = row;
-    let newCol = col;
-    
-    switch (direction) {
-        case 'ArrowUp':
-            newRow = Math.max(0, row - 1);
-            break;
-        case 'ArrowDown':
-            newRow = Math.min(8, row + 1);
-            break;
-        case 'ArrowLeft':
-            newCol = Math.max(0, col - 1);
-            break;
-        case 'ArrowRight':
-            newCol = Math.min(8, col + 1);
-            break;
-    }
-    
-    if (newRow !== row || newCol !== col) {
-        selectCell(newRow, newCol);
     }
 }
 
