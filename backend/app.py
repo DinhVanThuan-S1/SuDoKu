@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import json
 import copy
 
 from sudoku_generator import SudokuGenerator
@@ -187,40 +186,6 @@ def validate_note():
     
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
-
-@app.route('/api/check-solvable', methods=['POST'])
-def check_solvable():
-    """
-    Kiểm tra xem puzzle có giải được không
-    """
-    try:
-        data = request.json
-        board = copy.deepcopy(data['board'])
-        
-        # Kiểm tra board có hợp lệ không
-        if not solver.is_valid_board(board):
-            return jsonify({
-                'success': True,
-                'solvable': False,
-                'reason': 'Trạng thái bảng không hợp lệ'
-            })
-        
-        # Thử giải
-        if solver.solve(board):
-            return jsonify({
-                'success': True,
-                'solvable': True,
-                'reason': 'Puzzle có thể giải được'
-            })
-        else:
-            return jsonify({
-                'success': True,
-                'solvable': False,
-                'reason': 'Puzzle không có solution với trạng thái hiện tại'
-            })
-    
-    except Exception as e:
-        return jsonify({'success': False, 'error': f'Lỗi server: {str(e)}'})
 
 @app.route('/api/save-game', methods=['POST'])
 def save_game():
