@@ -10,7 +10,7 @@ from game_state import GameState
 app = Flask(__name__)
 CORS(app)  # Cho phép Electron truy cập
 
-@app.route("/")
+@app.route("/") # Đường dẫn chính
 def home():
     return "Hello World!"
 

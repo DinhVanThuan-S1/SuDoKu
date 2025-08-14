@@ -1,5 +1,6 @@
 import random
 import copy
+from sudoku_solver import SudokuSolver
 
 class SudokuGenerator:
     """
@@ -8,30 +9,7 @@ class SudokuGenerator:
     
     def __init__(self):
         self.board = [[0 for _ in range(9)] for _ in range(9)]
-    
-    def is_valid(self, board, row, col, num):
-        """
-        Kiểm tra số num có hợp lệ tại vị trí (row, col) không
-        """
-        # Kiểm tra hàng
-        for j in range(9):
-            if board[row][j] == num:
-                return False
-        
-        # Kiểm tra cột
-        for i in range(9):
-            if board[i][col] == num:
-                return False
-        
-        # Kiểm tra khối 3x3
-        start_row = (row // 3) * 3
-        start_col = (col // 3) * 3
-        for i in range(start_row, start_row + 3):
-            for j in range(start_col, start_col + 3):
-                if board[i][j] == num:
-                    return False
-        
-        return True
+        self.solver = SudokuSolver()  # Sử dụng solver để tránh trùng lặp code
     
     def fill_board_randomly(self, board):
         """
@@ -44,7 +22,7 @@ class SudokuGenerator:
                     random.shuffle(numbers)  # Tạo tính ngẫu nhiên
                     
                     for num in numbers:
-                        if self.is_valid(board, i, j, num):
+                        if self.solver.is_valid(board, i, j, num):
                             board[i][j] = num
                             if self.fill_board_randomly(board):
                                 return True
