@@ -43,6 +43,27 @@
       "score": 0,
       "date": "2025-08-10T13:03:22.440057",
       "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "hard",
+      "time": 101,
+      "score": 0,
+      "date": "2025-08-14T16:19:29.457937",
+      "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "hard",
+      "time": 8,
+      "score": 0,
+      "date": "2025-08-14T16:50:22.311960",
+      "solved_by_algorithm": true
+    },
+    {
+      "difficulty": "hard",
+      "time": 287,
+      "score": 0,
+      "date": "2025-08-14T18:17:13.475299",
+      "solved_by_algorithm": true
     }
   ],
   "medium": [
