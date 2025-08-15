@@ -118,11 +118,11 @@ async function initializeApp() {
  */
 function initializeEventListeners() {
     // Main menu buttons
-    elements.buttons.continue?.addEventListener('click', continueGame);
-    elements.buttons.newGame?.addEventListener('click', showDifficultyScreen);
-    elements.buttons.rules?.addEventListener('click', showRulesModal);
-    elements.buttons.scores?.addEventListener('click', showScoresModal);
-    elements.buttons.exit?.addEventListener('click', exitApp);
+    elements.buttons.continue?.addEventListener('click', continueGame); // click tiếp tục
+    elements.buttons.newGame?.addEventListener('click', showDifficultyScreen); // click trò chơi mới
+    elements.buttons.rules?.addEventListener('click', showRulesModal); // Click luật chơi
+    elements.buttons.scores?.addEventListener('click', showScoresModal); // Click bảng điểm
+    elements.buttons.exit?.addEventListener('click', exitApp); // Click thoát
     
     // Difficulty buttons
     elements.buttons.backToMain?.addEventListener('click', showMainScreen);
